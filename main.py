@@ -118,9 +118,12 @@ def handleExecuteButton(event=None):
             case "exit":
                 root.destroy()
             case "ls":
-                terminal["text"] += ("\nls\targs: " + " ".join(args))
-            case "cd":
-                terminal["text"] += ("\ncd\targs:" + " ".join(args))
+                terminal["text"] += ("\nls\targs: " + ", ".join(args))
+            case "cd":                
+                if len(args) > 1:
+                    terminal["text"] += "\ncd: too many arguments" 
+                else:
+                    terminal["text"] += ("\ncd\targs:" + ", ".join(args))
             case _:
                 terminal["text"] += f"\ncommand not found: {command}"
 
