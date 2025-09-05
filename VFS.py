@@ -51,6 +51,6 @@ class VFS:
 
 
 if __name__ == '__main__':
-    vfs = VFS('./VFS.json', '123/./123/././as')
+    vfs = VFS('./VFS.json', '123/./123/././asd')
     print(vfs.get_path())
     

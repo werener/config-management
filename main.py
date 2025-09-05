@@ -26,8 +26,7 @@ def gui():
     WINDOW_WIDTH = 1024
     WINDOW_HEIGHT = 512
     global TERMINAL_HIDDEN
-    VFS.current_path = ["~"]
-    print(VFS.current_path)
+    
     if CURRENT_SYSTEM == "Linux":
         FONT = "Modern"
         PREFIX_WIDTH = len(f"{LOGIN}@{HOSTNAME}$") + 1
@@ -232,5 +231,5 @@ def gui():
 
 if __name__ == '__main__':
     VFS = p.VFS(PATHS["VFS"])
-    print(VFS.vfs)
+    # print(VFS.vfs)
     gui()
