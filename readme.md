@@ -1,0 +1,1 @@
+python "main.py" --vfs VFS.json --script startup.txt

@@ -19,9 +19,12 @@ else:
 
 
 def get_startup_script():
-    with open('startup.txt', 'r') as suf:
-        return [x for x in suf]
-
+    path = argv_handling.handle_args()["script"]
+    if path:
+        with open(path, 'r') as suf:
+            return [x.removesuffix('\n') for x in suf]
+    else: 
+        return []
 
 def gui():
     root = tk.Tk()
@@ -97,8 +100,9 @@ def gui():
         else:
             terminal["text"] += f"\n{LOGIN}@{HOSTNAME}$ {inp}"
 
-    def parse_args():
-        inp = input_field.get().replace("'", '"')
+    def parse_args(inp=None):
+        if not inp:
+            inp=input_field.get().replace("'", '"')
         args = []
         try:
             command = inp.split()[0]
@@ -115,7 +119,9 @@ def gui():
                 else:
                     if comma_open:
                         buffer += symbol
-            print(comma_args)
+            if comma_open:
+                terminal['text'] += "\nunterminated comma"
+                raise Exception("Unterminated comma")
             # in case command is made of several words, i.e. 'good cd' should be a command {good cd}
             if comma_args and (command in comma_args[0]):
                 command = comma_args[0].removeprefix('"').removesuffix('"')
@@ -202,11 +208,16 @@ def gui():
     prefix.pack(in_=container, side="left")
     input_field.pack(in_=container, side="left")
     input_field.focus()
-
+    
+    if get_startup_script():
+        for command in get_startup_script():
+            add_to_terminal(command)
+            handle_args(parse_args(command))
+        else: 
+            unhide_terminal()
     root.mainloop()
 
 
 if __name__ == '__main__':
     argv_handling.handle_args()
-    get_startup_script()
     gui()
