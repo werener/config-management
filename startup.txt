@@ -1,0 +1,5 @@
+ls 123 'one argument'
+cd 123/2
+random_command 123 2
+cd 28 3
+ls 2 '12783 2738'
