@@ -231,5 +231,7 @@ def gui():
 
 if __name__ == '__main__':
     VFS = p.VFS(PATHS["VFS"])
-    # print(VFS.vfs)
+    print(VFS.vfs)
+    for x in VFS.vfs['root'].keys():
+        print(x)
     gui()

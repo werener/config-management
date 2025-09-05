@@ -1,12 +1,14 @@
 {
     "root": 
     {
-        "dir1": 
-            "file1.txt", 
+        "dir1": {
+            "file1.txt": "file"
+        }, 
         "dir2": 
         {
-            "dir3": 
-                "file2.json"
+            "dir3": {
+                "file2.json": "text"
+            }
         }
     }
 }
