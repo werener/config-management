@@ -1,33 +1,42 @@
 import tkinter as tk
 from tkinter import ttk
-import re
+import json
 import os, platform, sys, socket
 import argv_handling
+import VFS as p
 
 LOGIN = os.getlogin()
 HOSTNAME = socket.gethostname()
-WINDOW_WIDTH = 1024
-WINDOW_HEIGHT = 512
-TERMINAL_HIDDEN = True
 CURRENT_SYSTEM = platform.system()
-if CURRENT_SYSTEM == "Linux":
-    FONT = "Modern"
-    PREFIX_WIDTH = len(f"{LOGIN}@{HOSTNAME}$") + 1
-else:
-    FONT = "Arial"
-    PREFIX_WIDTH = len(f"{LOGIN}@{HOSTNAME}$")
+TERMINAL_HIDDEN = True
+
+PATHS = argv_handling.handle_args()
 
 
 def get_startup_script():
-    path = argv_handling.handle_args()["script"]
+    path = PATHS["script"]
     if path:
         with open(path, 'r') as suf:
             return [x.removesuffix('\n') for x in suf]
     else: 
         return []
 
+   
 def gui():
+    WINDOW_WIDTH = 1024
+    WINDOW_HEIGHT = 512
+    global TERMINAL_HIDDEN
+    VFS.current_path = ["~"]
+    print(VFS.current_path)
+    if CURRENT_SYSTEM == "Linux":
+        FONT = "Modern"
+        PREFIX_WIDTH = len(f"{LOGIN}@{HOSTNAME}$") + 1
+    else:
+        FONT = "Arial"
+        PREFIX_WIDTH = len(f"{LOGIN}@{HOSTNAME}$")
+    
     root = tk.Tk()
+    
     if root:
         root.configure(background="black", padx=3, pady=4),
         root.title(f"{LOGIN}@{HOSTNAME}")
@@ -94,12 +103,15 @@ def gui():
                 side="left",
             )
 
-    def add_to_terminal(inp):
-        if terminal["text"] == "":
-            terminal["text"] += f"{LOGIN}@{HOSTNAME}$ {inp}"
+    def add_to_terminal(inp, with_login=False):
+        if with_login:
+            if terminal["text"] == "":
+                terminal["text"] += f"{LOGIN}@{HOSTNAME}$ {inp}"
+            else:
+                terminal["text"] += f"\n{LOGIN}@{HOSTNAME}$ {inp}"
         else:
-            terminal["text"] += f"\n{LOGIN}@{HOSTNAME}$ {inp}"
-
+            terminal["text"] += f"\n{inp}"
+            
     def parse_args(inp=None):
         if not inp:
             inp=input_field.get().replace("'", '"')
@@ -120,7 +132,7 @@ def gui():
                     if comma_open:
                         buffer += symbol
             if comma_open:
-                terminal['text'] += "\nunterminated comma"
+                add_to_terminal("unterminated comma")
                 raise Exception("Unterminated comma")
             # in case command is made of several words, i.e. 'good cd' should be a command {good cd}
             if comma_args and (command in comma_args[0]):
@@ -148,27 +160,27 @@ def gui():
             case "exit":
                 root.destroy()
             case "ls":
-                terminal["text"] += ("\nls\targs: " + ", ".join(args))
+                add_to_terminal("ls\targs: " + ", ".join(args))
             case "cd":
                 if len(args) > 1:
-                    terminal["text"] += "\ncd: too many arguments"
+                    add_to_terminal("cd: too many arguments")
                 else:
-                    terminal["text"] += ("\ncd\targs:" + ", ".join(args))
+                   add_to_terminal("cd\targs:" + ", ".join(args))
 
             case "clear":
                 if len(args) > 0:
-                    terminal["text"] += "\nclear: too many arguments"
+                    add_to_terminal("clear: too many arguments")
                 else:
                     terminal["text"] = ""
                     terminal.pack_forget()
                     global TERMINAL_HIDDEN
                     TERMINAL_HIDDEN = True
             case _:
-                terminal["text"] += f"\ncommand not found: {command}"
+                add_to_terminal(f"command not found: {command}")
 
     def handleExecuteButton(event=None):
         unhide_terminal()
-        add_to_terminal(input_field.get())
+        add_to_terminal(input_field.get(), True)
         handle_args(parse_args())
         input_field.delete(0, "end")
         input_field.focus()
@@ -211,7 +223,7 @@ def gui():
     
     if get_startup_script():
         for command in get_startup_script():
-            add_to_terminal(command)
+            add_to_terminal(command, True)
             handle_args(parse_args(command))
         else: 
             unhide_terminal()
@@ -219,5 +231,6 @@ def gui():
 
 
 if __name__ == '__main__':
-    argv_handling.handle_args()
+    VFS = p.VFS(PATHS["VFS"])
+    print(VFS.vfs)
     gui()

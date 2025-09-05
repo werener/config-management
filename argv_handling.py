@@ -22,7 +22,7 @@ def handle_args():
                     except:
                         raise Exception(f"Empty arguments for flag {arg}")
     if not paths["VFS"]:
-        raise Exception("Path to VFS wasn't provided")
+        # raise Exception("Path to VFS wasn't provided")
         pass
     return paths
 
