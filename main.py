@@ -16,20 +16,20 @@ PATHS = argv_handling.handle_args()
 def get_startup_script():
     path = PATHS["script"]
     if path:
-        with open(path, 'r') as suf:
-            return [x.removesuffix('\n') for x in suf]
-    else: 
+        with open(path, "r") as suf:
+            return [x.removesuffix("\n") for x in suf]
+    else:
         return []
 
-   
+
 def gui():
     WINDOW_WIDTH = 1024
     WINDOW_HEIGHT = 512
-    
+
     FONT = "TkFixedFont"
     global TERMINAL_HIDDEN
     root = tk.Tk()
-    
+
     if root:
         root.configure(background="black", padx=3, pady=4),
         root.title(f"{LOGIN}@{HOSTNAME}: {vfs.get_path()}")
@@ -49,21 +49,24 @@ def gui():
         font=FONT,
         foreground="white",
     )
-    container = tk.Frame(highlightthickness=0,
-                         borderwidth=0,
-                         pady=0,
-                         background="red",
-                        )
-    prefix = tk.Label(container,
-                      borderwidth=0,
-                      width=0,
-                      padx=0,
-                      anchor="nw",
-                      background="black",
-                      justify="left",
-                      foreground="lime",
-                      font=FONT,
-                      text=f"{LOGIN}@{HOSTNAME}: {vfs.get_path()}$")
+    container = tk.Frame(
+        highlightthickness=0,
+        borderwidth=0,
+        pady=0,
+        background="red",
+    )
+    prefix = tk.Label(
+        container,
+        borderwidth=0,
+        width=0,
+        padx=0,
+        anchor="nw",
+        background="black",
+        justify="left",
+        foreground="lime",
+        font=FONT,
+        text=f"{LOGIN}@{HOSTNAME}: {vfs.get_path()}$",
+    )
     input_field = tk.Entry(
         container,
         highlightthickness=0,
@@ -78,23 +81,27 @@ def gui():
         insertborderwidth=2,
         insertwidth=3,
         insertofftime=0,
-        width=WINDOW_WIDTH
+        width=WINDOW_WIDTH,
     )
-   
+
     def set_new_working_dir():
-        prefix['text'] = f"{LOGIN}@{HOSTNAME}: {vfs.get_path()}$"
-        prefix['width'] = len(prefix['text']) + 1
-        input_field['width'] = WINDOW_WIDTH - len(prefix['text'])
-    
+        prefix["text"] = f"{LOGIN}@{HOSTNAME}: {vfs.get_path()}$"
+        prefix["width"] = len(prefix["text"]) + 1
+        input_field["width"] = WINDOW_WIDTH - len(prefix["text"])
+
     def unhide_terminal():
         global TERMINAL_HIDDEN
         if TERMINAL_HIDDEN:
             TERMINAL_HIDDEN = False
             container.pack_forget()
 
-            terminal.pack(side="top", )
+            terminal.pack(
+                side="top",
+            )
 
-            container.pack(side="top", )
+            container.pack(
+                side="top",
+            )
 
             prefix.pack(in_=container, side="left")
             input_field.pack(
@@ -111,17 +118,17 @@ def gui():
         else:
             if inp:
                 terminal["text"] += f"\n{inp}"
-            
+
     def parse_args(inp=""):
         if inp:
             inp = inp.replace("'", '"')
         else:
-            inp=input_field.get().replace("'", '"')
+            inp = input_field.get().replace("'", '"')
         args = []
         try:
             command = inp.split()[0]
             comma_args, comma_open, buffer = [], False, ""
-            
+
             for symbol in inp:
                 if symbol == '"':
                     if comma_open:
@@ -133,7 +140,7 @@ def gui():
                 else:
                     if comma_open:
                         buffer += symbol
-                
+
             if comma_open:
                 add_to_terminal("unterminated comma")
                 raise Exception("Unterminated comma")
@@ -150,7 +157,7 @@ def gui():
             args += inp.split()[1:]
         except Exception as e:
             command = ""
-            print('Error occured:', e)
+            print("Error occured:", e)
         return (command or None, args or [])
 
     def handle_args(command_args):
@@ -197,9 +204,24 @@ def gui():
                         if args[0].endswith(".json") or args[0].endswith(".txt"):
                             vfs.vfs_save(args[0])
                         else:
-                            add_to_terminal("vfs-save path needs to end with a *.json file")
+                            add_to_terminal(
+                                "vfs-save path needs to end with a *.json or *.txt file"
+                            )
                     case _:
                         add_to_terminal("vfs-save: too many arguments")
+            case "vfs-load":
+                match len(args):
+                    case 0:
+                        add_to_terminal("vfs-load needs and argument")
+                    case 1:
+                        if args[0].endswith(".json") or args[0].endswith(".txt"):
+                            vfs.vfs_load(args[0])
+                        else:
+                            add_to_terminal(
+                                "vfs-load path needs to end with a *.json or *.txt file"
+                            )
+                    case _:
+                        add_to_terminal("vfs-load: too many arguments")
             case "tail":
                 match len(args):
                     case 0:
@@ -216,7 +238,6 @@ def gui():
                         add_to_terminal(vfs.rev(args[0]))
                     case _:
                         add_to_terminal("rev: too many arguments")
-                        
             case "wc":
                 match len(args):
                     case 0:
@@ -239,7 +260,9 @@ def gui():
                     case 2:
                         add_to_terminal(vfs.chown(args[0], args[1]))
                     case _:
-                        add_to_terminal(f"chown takes exactly 2 arguments. provided: {len(args)}")
+                        add_to_terminal(
+                            f"chown takes exactly 2 arguments. provided: {len(args)}"
+                        )
             case _:
                 add_to_terminal(f"command not found: {command}")
 
@@ -285,18 +308,18 @@ def gui():
     prefix.pack(in_=container, side="left")
     input_field.pack(in_=container, side="left")
     input_field.focus()
-    
+
     if get_startup_script():
         for command in get_startup_script():
             add_to_terminal(command, True)
             handle_args(parse_args(command))
-        else: 
+        else:
             unhide_terminal()
     set_new_working_dir()
-    
+
     root.mainloop()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     vfs = Vfs(PATHS["VFS"])
     gui()

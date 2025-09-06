@@ -10,7 +10,6 @@ class Vfs:
 
     def __init__(self, path_to_VFS_file: str):
         self.current_path = [""]
-
         try:
             with open(path_to_VFS_file) as vfs_json:
                 self.vfs = j.load(vfs_json)
@@ -80,13 +79,22 @@ class Vfs:
         return ret
 
     def vfs_save(self, path):
-        save_state = (self.current_path.copy(), self.current_dir.copy())
+
         try:
             with open(path, "w") as file:
                 j.dump(self.vfs, file)
                 return ""
         except:
             return "Failed to save VFS"
+
+    def vfs_load(self, path):
+        try:
+            with open(path) as vfs_json:
+                self.vfs = j.load(vfs_json)
+                self.current_dir = self.vfs
+                return f"VFS succesfully loaded"
+        except:
+            return "Provided path for VFS doesn't exist"
 
     def tail(self, path: str):
         save_state = (self.current_path.copy(), self.current_dir.copy())
