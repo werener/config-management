@@ -1,9 +1,7 @@
+cd /first/for_txt
 ls
-clear
-ls
-ls /for_txt
-cd /first/branch/some_dir/
-ls 
-ls '/second/a/b/' /first/branch/dir_for_dirs
-cd '1''1'
-ls '/second/a/b/' '1'
+rev "file1.txt"
+tail file2.txt
+wc file3.txt
+chown file1.txt super_user
+cat file1.txt

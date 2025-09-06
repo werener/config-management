@@ -2,16 +2,16 @@
     "first": 
     {
         "for_txt": {
-            "file1.txt": "file",
-            "file2.txt": "file",
-            "file3.txt": "file"
+            "file1.txt": ["file", "user", "MQoyIDMKMSAyIDM="],
+            "file2.txt": ["file", "user", "cHl0aG9uICdtYWluLnB5JyAtLXZmcyBWRlMuanNvbiAtLXNjcmlwdCBzdGFydHVwLnR4dAoKIyBUbyBwdWxsIGEgY2VydGFpbiBjb21taXQKZ2l0IGZldGNoIG9yaWdpbiB7Y29waWVkIFNTSCBvZiB0aGUgY29tbWl0fQpnaXQgY2hlY2tvdXQgRkVUQ0hfSEVBRA=="],
+            "file3.txt": ["file", "user", "0K3RgtCw0L8gMi4g0JrQvtC90YTQuNCz0YPRgNCw0YbQuNGPCtCm0LXQu9GMOiDRgdC00LXQu9Cw0YLRjCDRjdC80YPQu9GP0YLQvtGAINC90LDRgdGC0YDQsNC40LLQsNC10LzRi9C8LCDRgtC+INC10YHRgtGMINC/0L7QtNC00LXRgNC20LDRgtGMINCy0LLQvtC0INC/0LDRgNCw0LzQtdGC0YDQvtCyCtC/0L7Qu9GM0LfQvtCy0LDRgtC10LvRjyDQsiDQv9GA0LjQu9C+0LbQtdC90LjQtS4g0J7RgNCz0LDQvdC40LfQvtCy0LDRgtGMINC00LvRjyDRjdGC0L7Qs9C+INGN0YLQsNC/0LAg0L7RgtC70LDQtNC+0YfQvdGL0Lkg0LLRi9Cy0L7QtCDQstGB0LXRhQrQt9Cw0LTQsNC90L3Ri9GFINC/0LDRgNCw0LzQtdGC0YDQvtCyINC/0YDQuCDQt9Cw0L/Rg9GB0LrQtSDRjdC80YPQu9GP0YLQvtGA0LAuCtCi0YDQtdCx0L7QstCw0L3QuNGPOgoxLiDQn9Cw0YDQsNC80LXRgtGA0Ysg0LrQvtC80LDQvdC00L3QvtC5INGB0YLRgNC+0LrQuDoK4oCTINCf0YPRgtGMINC6INGE0LjQt9C40YfQtdGB0LrQvtC80YMg0YDQsNGB0L/QvtC70L7QttC10L3QuNGOIFZGUy4K4oCTINCf0YPRgtGMINC6INGB0YLQsNGA0YLQvtCy0L7QvNGDINGB0LrRgNC40L/RgtGDLgoyNwoyLiDQodGC0LDRgNGC0L7QstGL0Lkg0YHQutGA0LjQv9GCINC00LvRjyDQstGL0L/QvtC70L3QtdC90LjRjyDQutC+0LzQsNC90LQg0Y3QvNGD0LvRj9GC0L7RgNCwOiDQvtGB0YLQsNC90LDQstC70LjQstCw0LXRgtGB0Y8g0L/RgNC4CtC/0LXRgNCy0L7QuSDQvtGI0LjQsdC60LUuINCf0YDQuCDQstGL0L/QvtC70L3QtdC90LjQuCDRgdC60YDQuNC/0YLQsCDQvdCwINGN0LrRgNCw0L3QtSDQvtGC0L7QsdGA0LDQttCw0LXRgtGB0Y8g0LrQsNC6INCy0LLQvtC0LArRgtCw0Log0Lgg0LLRi9Cy0L7QtCwg0LjQvNC40YLQuNGA0YPRjyDQtNC40LDQu9C+0LMg0YEg0L/QvtC70YzQt9C+0LLQsNGC0LXQu9C10LwuCjMuINCh0L7Qt9C00LDRgtGMINC90LXRgdC60L7Qu9GM0LrQviDRgdC60YDQuNC/0YLQvtCyINGA0LXQsNC70YzQvdC+0Lkg0J7QoSwg0LIg0LrQvtGC0L7RgNC+0Lkg0LLRi9C/0L7Quw=="]
         }, 
         "branch": 
         {
             "some_dir": {
-                "some_json.json": "file",
-                "some_csv.csv": "file",
-                "some_txt.txt": "file"
+                "some_json.json": ["file", "user", "empty"],
+                "some_csv.csv": ["file", "user", "empty"],
+                "some_txt.txt": ["file", "user", "empty"]
             },
             "dir_for_dirs": {
                 "dir1": {},
@@ -23,10 +23,10 @@
     "second": {
         "a": {
             "b": {
-                "c.pdf" : "file"
+                "c.pdf": ["file", "user", "empty"]
             }
         }
     },
-    ".stat": "file",
-    "asd": "file"
+    ".stat": ["file", "user", "empty"],
+    "asd": ["file", "user", "empty"]
 }

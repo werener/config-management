@@ -112,7 +112,6 @@ def gui():
             if inp:
                 terminal["text"] += f"\n{inp}"
             
-            
     def parse_args(inp=""):
         if inp:
             inp = inp.replace("'", '"')
@@ -157,7 +156,6 @@ def gui():
     def handle_args(command_args):
         # Command implementation
         command, args = command_args
-        print (args)
         match command:
             case None:
                 pass
@@ -202,7 +200,46 @@ def gui():
                             add_to_terminal("vfs-save path needs to end with a *.json file")
                     case _:
                         add_to_terminal("vfs-save: too many arguments")
-                    
+            case "tail":
+                match len(args):
+                    case 0:
+                        add_to_terminal("tail needs an argument")
+                    case 1:
+                        add_to_terminal(vfs.tail(args[0]))
+                    case _:
+                        add_to_terminal("tail: too many arguments")
+            case "rev":
+                match len(args):
+                    case 0:
+                        add_to_terminal("rev needs an argument")
+                    case 1:
+                        add_to_terminal(vfs.rev(args[0]))
+                    case _:
+                        add_to_terminal("rev: too many arguments")
+                        
+            case "wc":
+                match len(args):
+                    case 0:
+                        add_to_terminal("wc needs an argument")
+                    case 1:
+                        add_to_terminal(vfs.wc(args[0]))
+                    case _:
+                        add_to_terminal("wc: too many arguments")
+            case "cat":
+                match len(args):
+                    case 0:
+                        add_to_terminal("cat needs an argument")
+                    case 1:
+                        add_to_terminal(vfs.cat(args[0]))
+                    case _:
+                        for arg in args:
+                            add_to_terminal(vfs.cat(arg))
+            case "chown":
+                match len(args):
+                    case 2:
+                        add_to_terminal(vfs.chown(args[0], args[1]))
+                    case _:
+                        add_to_terminal(f"chown takes exactly 2 arguments. provided: {len(args)}")
             case _:
                 add_to_terminal(f"command not found: {command}")
 
