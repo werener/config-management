@@ -1,7 +1,7 @@
 import json as j
 
 
-class VFS:
+class Vfs:
     current_path: list
 
     path_to_VFS: str
@@ -26,11 +26,11 @@ class VFS:
     def get_path(self):
         return "~" + '/'.join(self.current_path)
     
-    def cd(self, where: str):
+    def cd(self, where: str='/'):
         if where == '/' or where == '~':
             self.current_path = ['']
             self.current_dir = self.vfs
-            return (False, "")
+            return ""
         where = where.removesuffix('/')
         save_state = (self.current_path.copy(), self.current_dir.copy())
         for direction in where.split('/'):
@@ -50,35 +50,46 @@ class VFS:
                         try:
                             if self.current_dir[direction] == "file":
                                 self.current_path, self.current_dir = save_state
-                                return (True, f"cd: {direction}: Not a directory")
+                                return f"cd: {direction}: Not a directory"
                             else:
                                 self.current_path.append(direction)
                                 self.current_dir = self.current_dir[direction]
                         except:
                             self.current_path, self.current_dir = save_state
-                            return (True, f"cd: {direction}: No such file or directory")
-        return (False, "")
+                            return f"cd: {direction}: No such file or directory"
+        return ""
                     
-    def ls(self, path="."):
+    def ls(self, path: str="."):
+        @staticmethod
+        def pretty_dir(s: str):
+            try:
+                if self.current_dir[s] != "file":
+                    return "/"+s
+            except:
+                raise Exception(f"wrong VFS structure: file {self.current_dir} doesn't have a 'file' tag")
+            return s
         save_state = (self.current_path.copy(), self.current_dir.copy())
         
         cd_ = self.cd(path)
-        if cd_[0]:
-            return (cd_[0], cd_[1].replace("cd", "ls"))
+        if cd_:
+            return cd_.replace("cd", "ls")
                    
-        ret = '\n'.join([o for o in self.current_dir])
+        ret = '\n'.join([pretty_dir(o) for o in self.current_dir])
         self.current_path, self.current_dir = save_state
         return ret
 
+    def vfs_save(self, path):
+        save_state = (self.current_path.copy(), self.current_dir.copy())
+        try:
+            with open(path, 'w') as file:
+                j.dump(self.vfs, file)
+                return ""
+        except:
+            return "Failed to save VFS"
 
 if __name__ == '__main__':
-    vfs = VFS('./VFS.json')
-    print(vfs.vfs)
+    vfs = Vfs('./VFS.json')
     
-    vfs.cd('/root')
-    print(vfs.get_path())
-    
-    print("-"*7)
-    print(vfs.ls("/root/"))
+    print('|',vfs.cd("/first"), '|', sep='')
     
     

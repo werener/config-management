@@ -1,14 +1,32 @@
 {
-    "root": 
+    "first": 
     {
-        "dir1": {
-            "file1.txt": "file"
+        "for_txt": {
+            "file1.txt": "file",
+            "file2.txt": "file",
+            "file3.txt": "file"
         }, 
-        "dir2": 
+        "branch": 
         {
-            "dir3": {
-                "file2.json": "text"
+            "some_dir": {
+                "some_json.json": "file",
+                "some_csv.csv": "file",
+                "some_txt.txt": "file"
+            },
+            "dir_for_dirs": {
+                "dir1": {},
+                "dir2": {},
+                "dir3": {}
             }
         }
-    }
+    },
+    "second": {
+        "a": {
+            "b": {
+                "c.pdf" : "file"
+            }
+        }
+    },
+    ".stat": "file",
+    "asd": "file"
 }

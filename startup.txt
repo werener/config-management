@@ -1,5 +1,9 @@
-ls 123 'one argument'
-cd 123/2
-random_command 123 2
-cd 28 3
-ls 2 '12783 2738'
+ls
+clear
+ls
+ls /for_txt
+cd /first/branch/some_dir/
+ls 
+ls '/second/a/b/' /first/branch/dir_for_dirs
+cd '1''1'
+ls '/second/a/b/' '1'

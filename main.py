@@ -3,7 +3,7 @@ from tkinter import ttk
 import json
 import os, platform, sys, socket
 import argv_handling
-import VFS as p
+from VFS import Vfs
 
 LOGIN = os.getlogin()
 HOSTNAME = socket.gethostname()
@@ -25,20 +25,14 @@ def get_startup_script():
 def gui():
     WINDOW_WIDTH = 1024
     WINDOW_HEIGHT = 512
+    
+    FONT = "TkFixedFont"
     global TERMINAL_HIDDEN
-    
-    if CURRENT_SYSTEM == "Linux":
-        FONT = "Modern"
-        PREFIX_WIDTH = len(f"{LOGIN}@{HOSTNAME}$") + 1
-    else:
-        FONT = "Arial"
-        PREFIX_WIDTH = len(f"{LOGIN}@{HOSTNAME}$")
-    
     root = tk.Tk()
     
     if root:
         root.configure(background="black", padx=3, pady=4),
-        root.title(f"{LOGIN}@{HOSTNAME}")
+        root.title(f"{LOGIN}@{HOSTNAME}: {vfs.get_path()}")
         root.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
 
     terminal = tk.Label(
@@ -58,7 +52,18 @@ def gui():
     container = tk.Frame(highlightthickness=0,
                          borderwidth=0,
                          pady=0,
-                         background="red")
+                         background="red",
+                        )
+    prefix = tk.Label(container,
+                      borderwidth=0,
+                      width=0,
+                      padx=0,
+                      anchor="nw",
+                      background="black",
+                      justify="left",
+                      foreground="lime",
+                      font=FONT,
+                      text=f"{LOGIN}@{HOSTNAME}: {vfs.get_path()}$")
     input_field = tk.Entry(
         container,
         highlightthickness=0,
@@ -73,19 +78,14 @@ def gui():
         insertborderwidth=2,
         insertwidth=3,
         insertofftime=0,
-        width=int(WINDOW_WIDTH * 0.75),
+        width=WINDOW_WIDTH
     )
-    prefix = tk.Label(container,
-                      borderwidth=0,
-                      width=PREFIX_WIDTH,
-                      padx=0,
-                      anchor="nw",
-                      background="black",
-                      justify="left",
-                      foreground="lime",
-                      font=FONT,
-                      text=f"{LOGIN}@{HOSTNAME}$")
-
+   
+    def set_new_working_dir():
+        prefix['text'] = f"{LOGIN}@{HOSTNAME}: {vfs.get_path()}$"
+        prefix['width'] = len(prefix['text']) + 1
+        input_field['width'] = WINDOW_WIDTH - len(prefix['text'])
+    
     def unhide_terminal():
         global TERMINAL_HIDDEN
         if TERMINAL_HIDDEN:
@@ -104,15 +104,19 @@ def gui():
 
     def add_to_terminal(inp, with_login=False):
         if with_login:
-            if terminal["text"] == "":
-                terminal["text"] += f"{LOGIN}@{HOSTNAME}$ {inp}"
+            if terminal["text"]:
+                terminal["text"] += f"\n{LOGIN}@{HOSTNAME}: {vfs.get_path()}$ {inp}"
             else:
-                terminal["text"] += f"\n{LOGIN}@{HOSTNAME}$ {inp}"
+                terminal["text"] += f"{LOGIN}@{HOSTNAME}: {vfs.get_path()}$ {inp}"
         else:
-            terminal["text"] += f"\n{inp}"
+            if inp:
+                terminal["text"] += f"\n{inp}"
             
-    def parse_args(inp=None):
-        if not inp:
+            
+    def parse_args(inp=""):
+        if inp:
+            inp = inp.replace("'", '"')
+        else:
             inp=input_field.get().replace("'", '"')
         args = []
         try:
@@ -130,13 +134,13 @@ def gui():
                 else:
                     if comma_open:
                         buffer += symbol
+                
             if comma_open:
                 add_to_terminal("unterminated comma")
                 raise Exception("Unterminated comma")
             # in case command is made of several words, i.e. 'good cd' should be a command {good cd}
             if comma_args and (command in comma_args[0]):
                 command = comma_args[0].removeprefix('"').removesuffix('"')
-                print(command)
             elif comma_args:
                 args.append(comma_args[0].removeprefix('"').removesuffix('"'))
                 inp = inp.replace(comma_args[0], "")
@@ -153,19 +157,32 @@ def gui():
     def handle_args(command_args):
         # Command implementation
         command, args = command_args
+        print (args)
         match command:
             case None:
-                print('No command provided')
+                pass
             case "exit":
                 root.destroy()
             case "ls":
-                add_to_terminal("ls\targs: " + ", ".join(args))
+                match len(args):
+                    case 0:
+                        add_to_terminal(vfs.ls())
+                    case 1:
+                        add_to_terminal(vfs.ls(args[0]))
+                    case _:
+                        for arg in args:
+                            add_to_terminal(f" {arg}:")
+                            add_to_terminal(vfs.ls(arg))
             case "cd":
-                if len(args) > 1:
-                    add_to_terminal("cd: too many arguments")
-                else:
-                   add_to_terminal("cd\targs:" + ", ".join(args))
-
+                match len(args):
+                    case 0:
+                        add_to_terminal(vfs.cd())
+                        set_new_working_dir()
+                    case 1:
+                        add_to_terminal(vfs.cd(args[0]))
+                        set_new_working_dir()
+                    case _:
+                        add_to_terminal("cd: too many arguments")
             case "clear":
                 if len(args) > 0:
                     add_to_terminal("clear: too many arguments")
@@ -174,6 +191,18 @@ def gui():
                     terminal.pack_forget()
                     global TERMINAL_HIDDEN
                     TERMINAL_HIDDEN = True
+            case "vfs-save":
+                match len(args):
+                    case 0:
+                        add_to_terminal("vfs-save needs and argument")
+                    case 1:
+                        if args[0].endswith(".json") or args[0].endswith(".txt"):
+                            vfs.vfs_save(args[0])
+                        else:
+                            add_to_terminal("vfs-save path needs to end with a *.json file")
+                    case _:
+                        add_to_terminal("vfs-save: too many arguments")
+                    
             case _:
                 add_to_terminal(f"command not found: {command}")
 
@@ -197,7 +226,7 @@ def gui():
         background="#1C1C1C",
         foreground="#616365",
         text="Execute",
-    ).pack(side="right", anchor=tk.NE)
+    ).pack(side="right", anchor=tk.SE)
 
     def handleClearButton(event=None):
         handle_args(("clear", []))
@@ -213,9 +242,9 @@ def gui():
         background="#1C1C1C",
         foreground="#616365",
         text="Clear",
-    ).pack(side="top", anchor=tk.NE)
+    ).pack(side="bottom", anchor=tk.SE)
 
-    container.pack(side="top", )
+    container.pack(side="top")
     prefix.pack(in_=container, side="left")
     input_field.pack(in_=container, side="left")
     input_field.focus()
@@ -226,12 +255,11 @@ def gui():
             handle_args(parse_args(command))
         else: 
             unhide_terminal()
+    set_new_working_dir()
+    
     root.mainloop()
 
 
 if __name__ == '__main__':
-    VFS = p.VFS(PATHS["VFS"])
-    print(VFS.vfs)
-    for x in VFS.vfs['root'].keys():
-        print(x)
+    vfs = Vfs(PATHS["VFS"])
     gui()
