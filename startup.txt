@@ -1,4 +1,3 @@
-vfs-load VFS.json
 cd /first/for_txt
 ls
 rev "file1.txt"
