@@ -188,7 +188,7 @@ def gui():
                         set_new_working_dir()
                     case _:
                         add_to_terminal("cd: too many arguments")
-            case "clear":
+            case "clear" | "c":
                 if len(args) > 0:
                     add_to_terminal("clear: too many arguments")
                 else:
