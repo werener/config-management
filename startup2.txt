@@ -1,4 +1,5 @@
 cd 123
 ls 123 123
 ls '123 123'
+cd /first
 cd 2 2
