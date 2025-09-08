@@ -163,28 +163,34 @@ def gui():
     def handle_args(command_args):
         # Command implementation
         command, args = command_args
-        match command:  
+        match command:
             case None:
                 pass
             case "exit":
                 root.destroy()
             case "ls":
                 match len(args):
+                    case 0:
+                        add_to_terminal(vfs.ls())
+                    case 1:
+                        add_to_terminal(vfs.ls(args[0]))
                     case _:
                         for arg in args:
-                            add_to_terminal(f" cd\targs: {' '.join(args)}:")
+                            add_to_terminal(f" {arg}:")
+                            add_to_terminal(vfs.ls(arg))
             case "cd":
                 match len(args):
                     case 0:
-                        add_to_terminal("cd needs an argument")
+                        add_to_terminal(vfs.cd())
+                        set_new_working_dir()
                     case 1:
-                        add_to_terminal(f"cd\targs: {' '.join(args)}")
+                        add_to_terminal(vfs.cd(args[0]))
                         set_new_working_dir()
                     case _:
-                        add_to_terminal("cd: too many arguments")   
+                        add_to_terminal("cd: too many arguments")
             case "clear" | "c":
                 if len(args) > 0:
-                    add_to_terminal("clear: too many arguments")                    
+                    add_to_terminal("clear: too many arguments")
                 else:
                     terminal["text"] = ""
                     terminal.pack_forget()
@@ -193,22 +199,76 @@ def gui():
             case "vfs-save":
                 match len(args):
                     case 0:
-                        add_to_terminal("vfs-save needs and argument")  
+                        add_to_terminal("vfs-save needs and argument")
                     case 1:
                         if args[0].endswith(".json") or args[0].endswith(".txt"):
                             vfs.vfs_save(args[0])
                         else:
                             add_to_terminal(
                                 "vfs-save path needs to end with a *.json or *.txt file"
-                            )      
+                            )
                     case _:
                         add_to_terminal("vfs-save: too many arguments")
+            case "vfs-load":
+                match len(args):
+                    case 0:
+                        add_to_terminal("vfs-load needs and argument")
+                    case 1:
+                        if args[0].endswith(".json") or args[0].endswith(".txt"):
+                            vfs.vfs_load(args[0])
+                        else:
+                            add_to_terminal(
+                                "vfs-load path needs to end with a *.json or *.txt file"
+                            )
+                    case _:
+                        add_to_terminal("vfs-load: too many arguments")
+            case "tail":
+                match len(args):
+                    case 0:
+                        add_to_terminal("tail needs an argument")
+                    case 1:
+                        add_to_terminal(vfs.tail(args[0]))
+                    case _:
+                        add_to_terminal("tail: too many arguments")
+            case "rev":
+                match len(args):
+                    case 0:
+                        add_to_terminal("rev needs an argument")
+                    case 1:
+                        add_to_terminal(vfs.rev(args[0]))
+                    case _:
+                        add_to_terminal("rev: too many arguments")
+            case "wc":
+                match len(args):
+                    case 0:
+                        add_to_terminal("wc needs an argument")
+                    case 1:
+                        add_to_terminal(vfs.wc(args[0]))
+                    case _:
+                        add_to_terminal("wc: too many arguments")
+            case "cat":
+                match len(args):
+                    case 0:
+                        add_to_terminal("cat needs an argument")
+                    case 1:
+                        add_to_terminal(vfs.cat(args[0]))
+                    case _:
+                        for arg in args:
+                            add_to_terminal(vfs.cat(arg))
+            case "chown":
+                match len(args):
+                    case 2:
+                        add_to_terminal(vfs.chown(args[0], args[1]))
+                    case _:
+                        add_to_terminal(
+                            f"chown takes exactly 2 arguments. provided: {len(args)}"
+                        )
             case _:
                 add_to_terminal(f"command not found: {command}")
-                
 
     def handle_script():
     # Command implementation
+        
         for command in get_startup_script():
             add_to_terminal(command, True)
             command, args = (parse_args(command))
@@ -219,15 +279,21 @@ def gui():
                     root.destroy()
                 case "ls":
                     match len(args):
+                        case 0:
+                            add_to_terminal(vfs.ls())
+                        case 1:
+                            add_to_terminal(vfs.ls(args[0]))
                         case _:
                             for arg in args:
-                                add_to_terminal(f" cd\targs: {' '.join(args)}")
+                                add_to_terminal(f" {arg}:")
+                                add_to_terminal(vfs.ls(arg))
                 case "cd":
                     match len(args):
                         case 0:
-                            add_to_terminal("cd needs an argument")
+                            add_to_terminal(vfs.cd())
+                            set_new_working_dir()
                         case 1:
-                            add_to_terminal(f"cd\targs: {' '.join(args)}")
+                            add_to_terminal(vfs.cd(args[0]))
                             set_new_working_dir()
                         case _:
                             add_to_terminal("cd: too many arguments")
@@ -260,6 +326,25 @@ def gui():
                                 break
                         case _:
                             add_to_terminal("vfs-save: too many arguments")
+                            add_to_terminal("SCRIPT FAILED. TERMINATING")
+                            break
+                case "vfs-load":
+                    match len(args):
+                        case 0:
+                            add_to_terminal("vfs-load needs and argument")
+                            add_to_terminal("SCRIPT FAILED. TERMINATING")
+                            break
+                        case 1:
+                            if args[0].endswith(".json") or args[0].endswith(".txt"):
+                                vfs.vfs_load(args[0])
+                            else:
+                                add_to_terminal(
+                                    "vfs-load path needs to end with a *.json or *.txt file"
+                                )
+                                add_to_terminal("SCRIPT FAILED. TERMINATING")
+                                break
+                        case _:
+                            add_to_terminal("vfs-load: too many arguments")
                             add_to_terminal("SCRIPT FAILED. TERMINATING")
                             break
                 case "unterminated_comma_mistake\1\2":
