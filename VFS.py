@@ -57,6 +57,7 @@ class Vfs:
         return ""
 
     def ls(self, path: str = "."):
+
         @staticmethod
         def pretty_dir(s: str):
             try:
@@ -99,7 +100,7 @@ class Vfs:
     def tail(self, path: str):
         save_state = (self.current_path.copy(), self.current_dir.copy())
         path = path.removesuffix("/")
-        file = path[path.rfind("/") + 1 :]
+        file = path[path.rfind("/") + 1:]
         path = path.replace(file, "")
         if path:
             cd_ = self.cd(path)
@@ -129,7 +130,7 @@ class Vfs:
     def rev(self, path: str):
         save_state = (self.current_path.copy(), self.current_dir.copy())
         path = path.removesuffix("/")
-        file = path[path.rfind("/") + 1 :]
+        file = path[path.rfind("/") + 1:]
         path = path.replace(file, "")
         if path:
             cd_ = self.cd(path)
@@ -146,7 +147,8 @@ class Vfs:
                     decoded_content = base64.b64decode(content).decode("utf-8")
                 except:
                     ret = f"rev: error decoding contents of {file}"
-                ret = "\n".join(map(lambda s: s[::-1], decoded_content.split("\n")))
+                ret = "\n".join(
+                    map(lambda s: s[::-1], decoded_content.split("\n")))
 
                 self.current_path, self.current_dir = save_state
                 return ret
@@ -160,7 +162,7 @@ class Vfs:
     def wc(self, path: str):
         save_state = (self.current_path.copy(), self.current_dir.copy())
         path = path.removesuffix("/")
-        file = path[path.rfind("/") + 1 :]
+        file = path[path.rfind("/") + 1:]
         path = path.replace(file, "")
         if path:
             cd_ = self.cd(path)
@@ -193,7 +195,7 @@ chars: {len(decoded_content)}"""
     def cat(self, path: str):
         save_state = (self.current_path.copy(), self.current_dir.copy())
         path = path.removesuffix("/")
-        file = path[path.rfind("/") + 1 :]
+        file = path[path.rfind("/") + 1:]
         path = path.replace(file, "")
         if path:
             cd_ = self.cd(path)
@@ -223,7 +225,7 @@ chars: {len(decoded_content)}"""
     def chown(self, path: str, new_owner: str):
         save_state = (self.current_path.copy(), self.current_dir.copy())
         path = path.removesuffix("/")
-        file = path[path.rfind("/") + 1 :]
+        file = path[path.rfind("/") + 1:]
         path = path.replace(file, "")
         if path:
             cd_ = self.cd(path)
@@ -246,6 +248,51 @@ chars: {len(decoded_content)}"""
             self.current_path, self.current_dir = save_state
             return f"chown: {file}: No such file"
 
+    def ls(self, path: str = "."):
+
+        @staticmethod
+        def pretty_dir(s: str):
+            try:
+                if type(self.current_dir[s]) != list:
+                    return "/" + s
+            except:
+                raise Exception(
+                    f"wrong VFS structure: file {self.current_dir} doesn't have a 'file' tag or content"
+                )
+            return s
+
+        save_state = (self.current_path.copy(), self.current_dir.copy())
+
+        cd_ = self.cd(path)
+        if cd_:
+            return cd_.replace("cd", "ls")
+
+        ret = "\n".join([pretty_dir(o) for o in self.current_dir])
+        self.current_path, self.current_dir = save_state
+        return ret
+
+    def rm(self, path: str):
+        save_state = (self.current_path.copy(), self.current_dir.copy())
+        path = path.removesuffix("/")
+        file = path[path.rfind("/") + 1:]
+        path = path.replace(file, "")
+        if path:
+            cd_ = self.cd(path)
+            if cd_:
+                return cd_.replace("cd", "rm")
+
+        try:
+            print(self.current_dir[file], sep = '\n')
+            if type(self.current_dir[file]) == list:
+                del self.current_dir[file]
+                print('\n\n',self.vfs, sep = '\n')               
+                
+            else:
+                self.current_path, self.current_dir = save_state
+                return f"rm: {file}: is a directory, not a file"
+        except Exception as e:
+            self.current_path, self.current_dir = save_state
+            return f"rm: {file}: No such file"
 
 if __name__ == "__main__":
     vfs = Vfs("./VFS.json")

@@ -263,6 +263,14 @@ def gui():
                         add_to_terminal(
                             f"chown takes exactly 2 arguments. provided: {len(args)}"
                         )
+            case "rm":
+                match len(args):
+                    case 0:
+                        add_to_terminal("rm needs an argument")
+                    case 1:
+                        add_to_terminal(vfs.rm(args[0]))
+                    case _:
+                        add_to_terminal("rm: too many arguments")
             case _:
                 add_to_terminal(f"command not found: {command}")
 
@@ -407,9 +415,18 @@ def gui():
                 case "unterminated_comma_mistake\1\2":
                     add_to_terminal("SCRIPT FAILED. TERMINATING")
                     break
+                case "rm":
+                    match len(args):
+                        case 0:
+                            add_to_terminal("rm needs an argument")
+                            break
+                        case 1:
+                            add_to_terminal(vfs.rm(args[0]))
+                        case _:
+                            add_to_terminal("rm: too many arguments")
+                            break
                 case _:
                     add_to_terminal(f"command not found: {command}")
-                    add_to_terminal("SCRIPT FAILED. TERMINATING")
                     break
 
     def handleExecuteButton(event=None):

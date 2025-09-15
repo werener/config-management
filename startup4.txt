@@ -1,0 +1,4 @@
+cd /first/for_txt
+ls
+rm file3.txt
+ls
