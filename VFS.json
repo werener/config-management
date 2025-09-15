@@ -9,9 +9,9 @@
         "branch": 
         {
             "some_dir": {
-                "some_json.json": ["file", "user", "empty"],
-                "some_csv.csv": ["file", "user", "empty"],
-                "some_txt.txt": ["file", "user", "empty"]
+                "some_json.json": ["file", "user", ""],
+                "some_csv.csv": ["file", "user", ""],
+                "some_txt.txt": ["file", "user", ""]
             },
             "dir_for_dirs": {
                 "dir1": {},
@@ -23,10 +23,10 @@
     "second": {
         "a": {
             "b": {
-                "c.pdf": ["file", "user", "empty"]
+                "c.pdf": ["file", "user", ""]
             }
         }
     },
-    ".stat": ["file", "user", "empty"],
-    "asd": ["file", "user", "empty"]
+    ".stat": ["file", "user", ""],
+    "asd": ["file", "user", ""]
 }

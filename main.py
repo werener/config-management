@@ -215,7 +215,7 @@ def gui():
                         add_to_terminal("vfs-load needs and argument")
                     case 1:
                         if args[0].endswith(".json") or args[0].endswith(".txt"):
-                            vfs.vfs_load(args[0])
+                            add_to_terminal(vfs.vfs_load(args[0]))
                         else:
                             add_to_terminal(
                                 "vfs-load path needs to end with a *.json or *.txt file"
@@ -263,14 +263,6 @@ def gui():
                         add_to_terminal(
                             f"chown takes exactly 2 arguments. provided: {len(args)}"
                         )
-            case "rm":
-                match len(args):
-                    case 0:
-                        add_to_terminal("rm needs an argument")
-                    case 1:
-                        add_to_terminal(vfs.rm(args[0]))
-                    case _:
-                        add_to_terminal("rm: too many arguments")
             case _:
                 add_to_terminal(f"command not found: {command}")
 
@@ -344,7 +336,7 @@ def gui():
                             break
                         case 1:
                             if args[0].endswith(".json") or args[0].endswith(".txt"):
-                                vfs.vfs_load(args[0])
+                                add_to_terminal(vfs.vfs_load(args[0]))
                             else:
                                 add_to_terminal(
                                     "vfs-load path needs to end with a *.json or *.txt file"
@@ -415,16 +407,6 @@ def gui():
                 case "unterminated_comma_mistake\1\2":
                     add_to_terminal("SCRIPT FAILED. TERMINATING")
                     break
-                case "rm":
-                    match len(args):
-                        case 0:
-                            add_to_terminal("rm needs an argument")
-                            break
-                        case 1:
-                            add_to_terminal(vfs.rm(args[0]))
-                        case _:
-                            add_to_terminal("rm: too many arguments")
-                            break
                 case _:
                     add_to_terminal(f"command not found: {command}")
                     break
@@ -476,7 +458,7 @@ def gui():
     
     if get_startup_script():
         handle_script()
-    unhide_terminal()
+        unhide_terminal()
     set_new_working_dir()
 
     root.mainloop()
