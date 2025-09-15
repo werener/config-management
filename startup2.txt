@@ -1,5 +1,4 @@
-cd 123
-ls 123 123
-ls '123 123'
-cd /first
+cd one
+ls ../one
+ls '.'
 cd 2 2

@@ -1,1 +1,1 @@
-python ./main.py --vfs VFS.json --script startup2.txt 
+python ./main.py --vfs VFS_a_few.json --script startup2.txt 
