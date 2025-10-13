@@ -1,7 +1,0 @@
-cd /first/for_txt
-ls
-rev "file1.txt"
-tail file2.txt
-wc file3.txt
-chown file1.txt super_user
-cat file1.txt

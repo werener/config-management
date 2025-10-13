@@ -1,4 +1,0 @@
-cd one
-ls ../one
-ls '.'
-cd 2 2
