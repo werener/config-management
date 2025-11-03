@@ -1,0 +1,6 @@
+[package]
+name = "package_name"
+url = "https://github.com/werener/config-management#"
+test_repos = false
+title_graph = "graph.png"
+substring = 732

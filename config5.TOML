@@ -1,0 +1,8 @@
+[package]
+name = "package_name"
+url = "https://github.com/werener/config-management#"
+test_repos = false
+version = "0.1"
+title_graph = "graph.png"
+substring = "pack"
+some_parameter= "eafihsdia"
